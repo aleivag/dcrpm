@@ -21,20 +21,14 @@ from .dcrpm import DcRPM
 from .rpmutil import RPMUtil
 from .util import which
 
-try:
-    import typing as t  # noqa
-except ImportError:
-    pass
 
 # Some sensible defaults.
-DEFAULT_MAX_PASSES = 5  # type: int
+DEFAULT_MAX_PASSES = 5
 
 # Taken from the original C++ dcrpm
-DEFAULT_MIN_REQUIRED_FREE_SPACE = 150 * 1048576  # type: int
+DEFAULT_MIN_REQUIRED_FREE_SPACE = 150 * 1048576
 
-LOG_FORMAT = (
-    "%(asctime)s %(levelname)s [%(module)s.%(funcName)s]: %(message)s"
-)  # type: str
+LOG_FORMAT = "%(asctime)s %(levelname)s [%(module)s.%(funcName)s]: %(message)s"
 DEFAULT_LOGGING_CONFIG = {
     "version": 1,
     "formatters": {"standard": {"format": LOG_FORMAT}},
@@ -61,11 +55,11 @@ DEFAULT_LOGGING_CONFIG = {
         "": {"handlers": ["console", "file"]},
         "status": {"handlers": ["console", "forensic_logger"]},
     },
-}  # type: t.Dict[str, t.Any]
+}
 
 
 def parse_args():
-    # type: () -> argparse.Namespace
+
     parser = argparse.ArgumentParser(
         prog="dcrpm", formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
@@ -161,7 +155,7 @@ def parse_args():
 
 
 def main():
-    # type: () -> int
+
     args = parse_args()
 
     # Set up logging

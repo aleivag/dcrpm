@@ -36,7 +36,6 @@ KILL_TIMEOUT = 5  # type: int
 
 class Yum:
     def __init__(self):
-        # type: () -> None
         self.logger = logging.getLogger()  # type: logging.Logger
         self.status_logger = logging.getLogger("status")  # type: logging.Logger
         self.yum = YUM_CMD_NAME  # type: str
@@ -57,7 +56,6 @@ class Yum:
         self.logger.info("Using %s for yum" % self.yum)
 
     def check_stuck(self, dry_run=False):
-        # type: (bool) -> bool
         try:
             pid, mtime = pidutil.pidfile_info(YUM_PID_PATH)
         # Fine if there's no pidfile, means nothing is using yum.
@@ -103,7 +101,6 @@ class Yum:
         return True
 
     def run_yum_clean(self):
-        # type: () -> None
         """
         Run yum clean expire-cache, which we've seen failing when rpmdb indexes
         were busted
@@ -114,7 +111,6 @@ class Yum:
             raise DBNeedsRebuild
 
     def run_yum_check(self):
-        # type: () -> None
         """
         Run yum check - which "Checks for problems in the rpmdb"
         """

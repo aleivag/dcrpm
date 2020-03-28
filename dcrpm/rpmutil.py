@@ -39,12 +39,12 @@ except ImportError:
     pass
 
 
-RPM_CHECK_TIMEOUT_SEC = 5  # type: int
-YUM_COMPLETE_TIMEOUT_SEC = 10  # type: int
-VERIFY_TIMEOUT_SEC = 5  # type: int
-RECOVER_TIMEOUT_SEC = 90  # type: int
-REBUILD_TIMEOUT_SEC = 300  # type: int
-MIN_ACCEPTABLE_PKG_COUNT = 50  # type: int
+RPM_CHECK_TIMEOUT_SEC = 5
+YUM_COMPLETE_TIMEOUT_SEC = 10
+VERIFY_TIMEOUT_SEC = 5
+RECOVER_TIMEOUT_SEC = 90
+REBUILD_TIMEOUT_SEC = 300
+MIN_ACCEPTABLE_PKG_COUNT = 50
 
 
 class RPMUtil:
@@ -54,16 +54,15 @@ class RPMUtil:
 
     def __init__(
         self,
-        dbpath,  # type: str
-        rpm_path,  # type: str
-        recover_path,  # type: str
-        verify_path,  # type: str
-        stat_path,  # type: str
-        yum_complete_transaction_path,  # type: str
-        blacklist,  # type: t.List[str]
-        forensic,  # type:  bool
+        dbpath,
+        rpm_path,
+        recover_path,
+        verify_path,
+        stat_path,
+        yum_complete_transaction_path,
+        blacklist,
+        forensic,
     ):
-        # type: (...) -> None
         self.dbpath = dbpath
         self.rpm_path = rpm_path
         self.recover_path = recover_path
@@ -77,7 +76,6 @@ class RPMUtil:
         self.populate_tables()
 
     def populate_tables(self):
-        # type: () -> None
         """
         Populates self.tables. This is broken out from the constructor to
         support unit tests; the initial constructor is called with /tmp, but
@@ -90,7 +88,6 @@ class RPMUtil:
         ]  # type: t.List[str]
 
     def db_stat(self):
-        # type: () -> None
         """
         Runs `db_stat -CA` which offers a view into the state of Berkeley DB
         environment.
@@ -112,7 +109,6 @@ class RPMUtil:
             self.logger.error("db_stat -CA failed")
 
     def _poke_index(self, cmd, checks):
-        # type: (t.Sequence[str], t.Iterable[t.Callable[[CompletedProcess], bool]]) -> CompletedProcess
         """
         Run cmd, and ensure all checks are True. Raise DBIndexNeedsRebuild otherwise
         """
@@ -124,7 +120,6 @@ class RPMUtil:
         return proc
 
     def check_rpmdb_indexes(self):
-        # type: () -> None
         """
         For each rpmdb file we define a rpm command that blows up on inconsistencies,
         or returns incorrect results. Structure:
@@ -282,7 +277,6 @@ class RPMUtil:
                 raise DBNeedsRecovery()
 
     def check_rpm_qa(self):
-        # type: () -> None
         """
         Runs `rpm -qa` which serves as a good proxy check for whether bdb needs recovery
         """
@@ -311,7 +305,6 @@ class RPMUtil:
         self.logger.debug("Package count: %d", len(packages))
 
     def query(self, rpm_name):
-        # type: (str) -> None
         """
         The most basic sanity check, as `rpm -q $rpm_name` can return out of whack
         results (like 'perl' >.>)
@@ -331,7 +324,6 @@ class RPMUtil:
             raise DBNeedsRecovery()
 
     def recover_db(self):
-        # type: () -> None
         """
         Runs `db_recover`.
         """
@@ -356,7 +348,6 @@ class RPMUtil:
             self.status_logger.debug(proc.stderr, extra={"key": "db_recover"})
 
     def rebuild_db(self):
-        # type: () -> None
         """
         Runs `rpm --rebuilddb`.
         """
@@ -370,7 +361,6 @@ class RPMUtil:
             raise
 
     def check_tables(self):
-        # type: () -> None
         """
         Runs the equivalent of:
 
@@ -405,7 +395,6 @@ class RPMUtil:
             raise DBNeedsRebuild()
 
     def verify_tables(self):
-        # type: () -> None
         """
         Runs `db_verify` on all rpmdb tables.
         """
@@ -431,7 +420,6 @@ class RPMUtil:
                 raise DcRPMException()
 
     def clean_yum_transactions(self):
-        # type: () -> None
         """
         Runs yum-complete-transaction.
         """
@@ -446,7 +434,6 @@ class RPMUtil:
     def kill_spinning_rpm_query_processes(
         self, kill_after_seconds=3600, kill_timeout=5
     ):
-        # type: (int, int) -> None
         """
         Find and kill any rpm query processes over an hour old by looking explicitly for
         `rpm -q`.
@@ -483,7 +470,6 @@ class RPMUtil:
                 )
 
     def _get_macros(self):
-        # type: () -> t.Dict[str, str]
         result = run_with_timeout(
             [self.rpm_path, "--dbpath", self.dbpath, "--showrc"],
             timeout=RPM_CHECK_TIMEOUT_SEC,
@@ -502,7 +488,6 @@ class RPMUtil:
         return macros
 
     def get_db_backend(self):
-        # type: () -> str
         macros = self._get_macros()
         if "_db_backend" in macros:
             return macros["_db_backend"]

@@ -25,12 +25,10 @@ class ForensicLogger(logging.Handler):
     """
 
     def __init__(self, logdir, level=logging.NOTSET):
-        # type: (str, int) -> None
         self.logdir = logdir
         super(ForensicLogger, self).__init__(level=level)
 
     def debug(self, record):
-        # type: (logging.LogRecord) -> None
         # Check if 'key' was supplied to the logger
         # logger.debug(text, extra={'key': filename})
         if not hasattr(record, "key"):
@@ -50,6 +48,5 @@ class ForensicLogger(logging.Handler):
             fp.write(record.msg)
 
     def emit(self, record):
-        # type: (logging.LogRecord) -> None
         if record.levelno == logging.DEBUG:
             self.debug(record)

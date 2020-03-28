@@ -21,30 +21,18 @@ from . import pidutil
 from .util import DBNeedsRebuild, DBNeedsRecovery, DcRPMException, RepairAction
 from .yum import Yum
 
-try:
-    import typing as t
-
-    if t.TYPE_CHECKING:
-        import argparse
-
-        from .rpmutil import RPMUtil
-except ImportError:
-    pass
-
 
 class DcRPM:
-    YUM_PATH = "/var/lib/yum"  # type: str
-    YUM_TRANSACTION_BASE = "*transaction-all.*"  # type: str
+    YUM_PATH = "/var/lib/yum"
+    YUM_TRANSACTION_BASE = "*transaction-all.*"
 
     def __init__(self, rpmutil, args):
-        # type: (RPMUtil, argparse.Namespace) -> None
         self.rpmutil = rpmutil
         self.args = args
-        self.logger = logging.getLogger()  # type: logging.Logger
-        self.status_logger = logging.getLogger("status")  # type: logging.Logger
+        self.logger = logging.getLogger()
+        self.status_logger = logging.getLogger("status")
 
     def run(self):
-        # type: () -> bool
         if not self.has_free_disk_space():
             self.status_logger.error("not_enough_disk")
             self.logger.error("Need at least %sB free to continue" % self.args.minspace)
@@ -171,7 +159,6 @@ class DcRPM:
         return False
 
     def run_recovery(self):
-        # type: () -> None
         """
         Performs DB recovery by doing the following:
             * Kills pids holding the .dbenv.lock or .rpm.lock files
@@ -216,7 +203,6 @@ class DcRPM:
         os.unlink(hardlink)
 
     def run_rebuild(self):
-        # type: () -> None
         self.status_logger.info(RepairAction.TABLE_REBUILD)
         if self.args.dry_run:
             self.logger.warning(
@@ -226,7 +212,6 @@ class DcRPM:
         self.rpmutil.rebuild_db()
 
     def hardlink_db001(self):
-        # type: () -> str
         old_path = join(self.args.dbpath, "__db.001")
         new_path = join(self.args.dbpath, "__dcrpm_py_inode_pointer")
 
@@ -245,7 +230,6 @@ class DcRPM:
             raise DcRPMException("Could not save __db.001 failed")
 
     def stale_yum_transactions_exist(self):
-        # type: () -> bool
         """
         Detects whether there are stale yum transactions in /var/lib/yum.
         """
@@ -255,7 +239,6 @@ class DcRPM:
         )
 
     def has_free_disk_space(self):
-        # type: () -> bool
         """
         Checks if `fs` has enough free disk space to perform the remaining
         checks.
@@ -265,7 +248,6 @@ class DcRPM:
         return buf.f_bfree > desired_free_blocks
 
     def call_verify_tables(self):
-        # type: () -> bool
         """
         Because rpmutil.verify_tables requires a different way of exception
         handling (i.e. if a db_verify fails on one of the tables, we might need

@@ -30,5 +30,6 @@ root=$(git rev-parse --show-toplevel)
     --output text \
     --search-path "$(get_site_packages)" \
     --search-path "$root" \
+    --search-path "$root/dcrpm" \
     --show-parse-errors \
     check

@@ -26,17 +26,16 @@ except ImportError:
     pass
 
 
-DEFAULT_TIMEOUT = 5  # type: int
+DEFAULT_TIMEOUT = 5
 # Seconds (macOS `lsof` is slow)
-LSOF_TIMEOUT = 60  # type: int
+LSOF_TIMEOUT = 60
 # Don't kill init/launchd or kernel_task
-MIN_PID = 2  # type: int
+MIN_PID = 2
 
-logger = logging.getLogger()  # type: logging.Logger
+logger = logging.getLogger()
 
 
 def process(pid):
-    # type: (int) -> t.Optional[psutil.Process]
     """
     Thin wrapper around psutil.Process with exception handling, mainly for
     encapsulation.
@@ -49,7 +48,6 @@ def process(pid):
 
 
 def _pids_holding_file(lsof, path):
-    # type: (str, str) -> t.Set[int]
     try:
         proc = run_with_timeout(
             [lsof, "-F", "p", path], LSOF_TIMEOUT, raise_on_nonzero=False
@@ -69,7 +67,6 @@ def _pids_holding_file(lsof, path):
 
 
 def procs_holding_file(path):
-    # type: (str) -> t.Set[psutil.Process]
     """
     Return a set of processes holding `path` open by using `lsof`. `lsof` is slower but
     will find processes that have other links to the same inode open.
@@ -83,7 +80,6 @@ def procs_holding_file(path):
 
 
 def pidfile_info(pidfile):
-    # type: (str) -> t.Tuple[int, int]
     """
     Returns tuple of yum.pid pid and file mtime. Raises:
         FileNotFoundError if pidfile doesn't exist
@@ -102,7 +98,6 @@ def pidfile_info(pidfile):
 
 
 def send_signal(proc, sig, timeout=DEFAULT_TIMEOUT):
-    # type: (psutil.Process, enum.IntEnum, int) -> bool
     """
     Sends signal `sig` to process `proc`, waiting on each and handles timeouts
     as well as nonexistent pids. Returns whether pid was successfully sent
@@ -130,7 +125,6 @@ def send_signal(proc, sig, timeout=DEFAULT_TIMEOUT):
 
 
 def send_signals(procs, signal, timeout=DEFAULT_TIMEOUT):
-    # type: (t.Iterable[psutil.Process], enum.IntEnum, int) -> bool
     """
     Sends signal to all processes in `procs`. Returns whether anything was
     successfully signaled.

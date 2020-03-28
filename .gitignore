@@ -16,6 +16,7 @@ Icon
 Thumbs.db
 .tmtags
 .idea
+.vscode
 tags
 vendor.tags
 tmtagsHistory
